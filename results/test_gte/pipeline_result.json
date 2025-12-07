@@ -1,0 +1,45 @@
+{
+  "topics": {
+    "EgyptianProtest": {
+      "topic_name": "EgyptianProtest",
+      "num_events": 4,
+      "num_clusters": 3,
+      "timeline": {
+        "entries": [
+          {
+            "date": "2010-12-17",
+            "summary": "Mohammed Bouazizi, a 26-year-old unemployed fruit stand owner in Tunisia, set himself on fire after a policewoman confiscated his unlicensed produce stand. This act sparked the Jasmine Revolution.",
+            "significance": 0.0,
+            "cluster_id": 0,
+            "event_id": 1
+          },
+          {
+            "date": "2011-01-25",
+            "summary": "Mass protests began in Egypt against President Hosni Mubarak's regime, which had been in power since 1981, as part of a broader pro-democracy movement in the Arab world.",
+            "significance": 0.0,
+            "cluster_id": 2,
+            "event_id": 3
+          },
+          {
+            "date": "2013-02-11",
+            "summary": "Two men were charged in the death of a Chicago teen who performed at an inauguration event. The Carnival Triumph cruise ship, which experienced a fire in its engine room, is being towed to Mobile, Alabama, instead of Mexico. Discussions are ongoing about the possibility of the next pope being from Africa or Latin America.",
+            "significance": 0.0,
+            "cluster_id": 1,
+            "event_id": 0
+          }
+        ],
+        "num_entries": 3
+      },
+      "eval_result": {
+        "ar1": 0.006447124304267161,
+        "ar2": 0.0,
+        "date_f1": 0.08695652173913045
+      }
+    }
+  },
+  "avg_result": {
+    "ar1": 0.006447124304267161,
+    "ar2": 0.0,
+    "date_f1": 0.08695652173913045
+  }
+}

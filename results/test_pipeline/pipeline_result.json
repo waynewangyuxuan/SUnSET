@@ -1,0 +1,67 @@
+{
+  "topics": {
+    "EgyptianProtest": {
+      "topic_name": "EgyptianProtest",
+      "num_events": 4,
+      "num_clusters": 2,
+      "timeline": {
+        "entries": [
+          {
+            "date": "2011-01-14",
+            "summary": "The Jasmine Revolution in Tunisia led to the ousting of President Zine el-Abidine Ben Ali, ending his 23-year reign and forcing him into exile.",
+            "significance": 0.2775144097058219,
+            "cluster_id": 0,
+            "event_id": 2
+          },
+          {
+            "date": "2013-02-11",
+            "summary": "Two men charged in the death of a Chicago teen who performed at an inauguration event. The Carnival Triumph cruise ship, which experienced a fire in the engine room, is being towed to Mobile, AL instead of Mexico. Discussions arise about the possibility of the next pope being from Africa or Latin America.",
+            "significance": 0.09966799462495582,
+            "cluster_id": 1,
+            "event_id": 0
+          }
+        ],
+        "num_entries": 2
+      },
+      "eval_result": {
+        "ar1": 0.0,
+        "ar2": 0.0,
+        "date_f1": 0.0
+      }
+    },
+    "Finan": {
+      "topic_name": "Finan",
+      "num_events": 4,
+      "num_clusters": 2,
+      "timeline": {
+        "entries": [
+          {
+            "date": "2008-09-07",
+            "summary": "The U.S. government took control of housing finance giants Fannie Mae and Freddie Mac, marking a significant intervention in the financial markets.",
+            "significance": 0.09966799462495583,
+            "cluster_id": 1,
+            "event_id": 2
+          },
+          {
+            "date": "2008-09-14",
+            "summary": "The U.S. financial system faced a severe crisis as Merrill Lynch and Lehman Brothers were on the brink of collapse, with Merrill being acquired by Bank of America and Lehman filing for bankruptcy. American International Group sought a financial lifeline. This followed the government's takeover of Fannie Mae and Freddie Mac a week earlier.",
+            "significance": 0.28300878179974626,
+            "cluster_id": 0,
+            "event_id": 0
+          }
+        ],
+        "num_entries": 2
+      },
+      "eval_result": {
+        "ar1": 0.002004287194300142,
+        "ar2": 0.0006597107275632858,
+        "date_f1": 0.029850746268656723
+      }
+    }
+  },
+  "avg_result": {
+    "ar1": 0.001002143597150071,
+    "ar2": 0.0003298553637816429,
+    "date_f1": 0.014925373134328361
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "stage": "pipeline",
+  "timings": {
+    "stage1_extraction": {
+      "count": 1,
+      "total_ms": 13338.61,
+      "avg_ms": 13338.61,
+      "min_ms": 13338.61,
+      "max_ms": 13338.61,
+      "p50_ms": 13338.61,
+      "p95_ms": 13338.61
+    },
+    "global_stats": {
+      "count": 1,
+      "total_ms": 0.04,
+      "avg_ms": 0.04,
+      "min_ms": 0.04,
+      "max_ms": 0.04,
+      "p50_ms": 0.04,
+      "p95_ms": 0.04
+    },
+    "embedding": {
+      "count": 2,
+      "total_ms": 184.36,
+      "avg_ms": 92.18,
+      "min_ms": 45.18,
+      "max_ms": 139.18,
+      "p50_ms": 92.18,
+      "p95_ms": 139.18
+    },
+    "stage2_clustering": {
+      "count": 2,
+      "total_ms": 1.52,
+      "avg_ms": 0.76,
+      "min_ms": 0.64,
+      "max_ms": 0.88,
+      "p50_ms": 0.76,
+      "p95_ms": 0.88
+    },
+    "stage3_timeline": {
+      "count": 2,
+      "total_ms": 1.0,
+      "avg_ms": 0.5,
+      "min_ms": 0.47,
+      "max_ms": 0.53,
+      "p50_ms": 0.5,
+      "p95_ms": 0.53
+    },
+    "evaluation": {
+      "count": 2,
+      "total_ms": 0.52,
+      "avg_ms": 0.26,
+      "min_ms": 0.03,
+      "max_ms": 0.49,
+      "p50_ms": 0.26,
+      "p95_ms": 0.49
+    }
+  },
+  "counts": {},
+  "values": {}
+}

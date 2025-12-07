@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "date": "2008-09-07",
+      "summary": "The U.S. government took control of housing finance giants Fannie Mae and Freddie Mac, marking a significant intervention in the financial markets.",
+      "significance": 0.09966799462495583,
+      "cluster_id": 1,
+      "event_id": 2
+    },
+    {
+      "date": "2008-09-14",
+      "summary": "The U.S. financial system faced a severe crisis as Merrill Lynch and Lehman Brothers were on the brink of collapse, with Merrill being acquired by Bank of America and Lehman filing for bankruptcy. American International Group sought a financial lifeline. This followed the government's takeover of Fannie Mae and Freddie Mac a week earlier.",
+      "significance": 0.28300878179974626,
+      "cluster_id": 0,
+      "event_id": 0
+    }
+  ],
+  "num_entries": 2
+}

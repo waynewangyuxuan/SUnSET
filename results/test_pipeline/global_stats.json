@@ -1,0 +1,80 @@
+{
+  "count": {
+    "Carnival Triumph": {
+      "EgyptianProtest": 1
+    },
+    "Mohammed Bouazizi": {
+      "EgyptianProtest": 2
+    },
+    "Zine el-Abidine Ben Ali": {
+      "EgyptianProtest": 2
+    },
+    "Mona Eltahawy": {
+      "EgyptianProtest": 2
+    },
+    "Moammar Gaddafi": {
+      "EgyptianProtest": 1
+    },
+    "Ali Abdullah Saleh": {
+      "EgyptianProtest": 1
+    },
+    "Hosni Mubarak": {
+      "EgyptianProtest": 1
+    },
+    "Saad Eddin Ibrahim": {
+      "EgyptianProtest": 1
+    },
+    "Dr. Mohamed ElBaradei": {
+      "EgyptianProtest": 1
+    },
+    "Anwar Sadat": {
+      "EgyptianProtest": 1
+    },
+    "Merrill Lynch": {
+      "Finan": 2
+    },
+    "Lehman Brothers": {
+      "Finan": 3
+    },
+    "Bank of America": {
+      "Finan": 2
+    },
+    "American International Group": {
+      "Finan": 1
+    },
+    "Fannie Mae and Freddie Mac": {
+      "Finan": 1
+    },
+    "Henry M. Paulson Jr.": {
+      "Finan": 1
+    },
+    "Timothy F. Geithner": {
+      "Finan": 1
+    },
+    "U.S. government": {
+      "Finan": 1
+    },
+    "Fannie Mae": {
+      "Finan": 1
+    },
+    "Freddie Mac": {
+      "Finan": 1
+    },
+    "Federal Deposit Insurance Corp.": {
+      "Finan": 1
+    },
+    "Treasury Secretary Timothy F. Geithner": {
+      "Finan": 1
+    },
+    "Fed Chairman Ben S. Bernanke": {
+      "Finan": 1
+    },
+    "White House deputy spokesman Jennifer R. Psaki": {
+      "Finan": 1
+    }
+  },
+  "topics": [
+    "EgyptianProtest",
+    "Finan"
+  ]
+}

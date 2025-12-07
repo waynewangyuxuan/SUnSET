@@ -6,7 +6,9 @@
       "Bash(mkdir:*)",
       "Bash(ls:*)",
       "Bash(uv sync:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "date": "2011-01-14",
+      "summary": "The Jasmine Revolution in Tunisia led to the ousting of President Zine el-Abidine Ben Ali, ending his 23-year reign and forcing him into exile.",
+      "significance": 0.2775144097058219,
+      "cluster_id": 0,
+      "event_id": 2
+    },
+    {
+      "date": "2013-02-11",
+      "summary": "Two men charged in the death of a Chicago teen who performed at an inauguration event. The Carnival Triumph cruise ship, which experienced a fire in the engine room, is being towed to Mobile, AL instead of Mexico. Discussions arise about the possibility of the next pope being from Africa or Latin America.",
+      "significance": 0.09966799462495582,
+      "cluster_id": 1,
+      "event_id": 0
+    }
+  ],
+  "num_entries": 2
+}

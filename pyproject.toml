@@ -11,6 +11,7 @@ dependencies = [
     # Embedding & ML
     "numpy>=1.24.0",
     "scikit-learn>=1.3.0",
+    "sentence-transformers>=2.2.0",  # For local GTE embedding
 
     # NLP
     "spacy>=3.7.0",
@@ -25,6 +26,9 @@ dependencies = [
 
     # Data
     "tqdm>=4.66.0",
+
+    # Environment
+    "python-dotenv>=1.0.0",
 ]
 
 [project.optional-dependencies]

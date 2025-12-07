@@ -1,0 +1,340 @@
+{
+  "count": {
+    "Carnival Triumph": {
+      "EgyptianProtest": 1
+    },
+    "Mohammed Bouazizi": {
+      "EgyptianProtest": 2
+    },
+    "Zine el-Abidine Ben Ali": {
+      "EgyptianProtest": 2
+    },
+    "Mona Eltahawy": {
+      "EgyptianProtest": 2
+    },
+    "Moammar Gaddafi": {
+      "EgyptianProtest": 1
+    },
+    "Ali Abdullah Saleh": {
+      "EgyptianProtest": 1,
+      "SyrianCrisis": 3
+    },
+    "Hosni Mubarak": {
+      "EgyptianProtest": 1
+    },
+    "Saad Eddin Ibrahim": {
+      "EgyptianProtest": 1
+    },
+    "Dr. Mohamed ElBaradei": {
+      "EgyptianProtest": 1
+    },
+    "Anwar Sadat": {
+      "EgyptianProtest": 1
+    },
+    "Merrill Lynch": {
+      "Finan": 2
+    },
+    "Lehman Brothers": {
+      "Finan": 2
+    },
+    "Bank of America": {
+      "Finan": 1
+    },
+    "American International Group": {
+      "Finan": 1
+    },
+    "Fannie Mae and Freddie Mac": {
+      "Finan": 1
+    },
+    "Henry M. Paulson Jr.": {
+      "Finan": 2
+    },
+    "Timothy F. Geithner": {
+      "Finan": 2
+    },
+    "Federal Reserve Bank of New York": {
+      "Finan": 2
+    },
+    "Congress": {
+      "Finan": 1
+    },
+    "Securities and Exchange Commission": {
+      "Finan": 1
+    },
+    "Federal Deposit Insurance Corp.": {
+      "Finan": 1
+    },
+    "Treasury Secretary Timothy F. Geithner": {
+      "Finan": 1
+    },
+    "Fed Chairman Ben S. Bernanke": {
+      "Finan": 1
+    },
+    "Michael Jackson": {
+      "MJ": 4
+    },
+    "John Branca": {
+      "MJ": 2
+    },
+    "John McClain": {
+      "MJ": 2
+    },
+    "Discovery Communications": {
+      "MJ": 2
+    },
+    "Dr Conrad Murray": {
+      "MJ": 1
+    },
+    "Discovery Channel": {
+      "MJ": 1
+    },
+    "Michael Jackson's estate": {
+      "MJ": 1
+    },
+    "Dr. Conrad Murray": {
+      "MJ": 3
+    },
+    "Deputy District Attorney David Walgren": {
+      "MJ": 1
+    },
+    "J Michael Flanagan": {
+      "MJ": 1
+    },
+    "Dr. Thao Nguyen": {
+      "MJ": 2
+    },
+    "Betty Ford": {
+      "SyrianCrisis": 4
+    },
+    "President Gerald Ford": {
+      "SyrianCrisis": 1
+    },
+    "Nancy Reagan": {
+      "SyrianCrisis": 4
+    },
+    "President Barack Obama": {
+      "SyrianCrisis": 1
+    },
+    "Former President George W. Bush": {
+      "SyrianCrisis": 1
+    },
+    "Gerald Ford": {
+      "SyrianCrisis": 3
+    },
+    "Richard Nixon": {
+      "SyrianCrisis": 1
+    },
+    "George W. Bush": {
+      "SyrianCrisis": 2
+    },
+    "Betty Ford Centre": {
+      "SyrianCrisis": 1
+    },
+    "U.S. Naval Hospital at Long Beach": {
+      "SyrianCrisis": 1
+    },
+    "Barack Obama": {
+      "SyrianCrisis": 1
+    },
+    "Abd-Rabbu Mansour Hadi": {
+      "SyrianCrisis": 3
+    },
+    "Gregory Johnsen": {
+      "SyrianCrisis": 3
+    },
+    "Khaled Fattah": {
+      "SyrianCrisis": 2
+    },
+    "Saudi King Abdullah": {
+      "SyrianCrisis": 3
+    },
+    "Saudi cabinet": {
+      "SyrianCrisis": 1
+    },
+    "Tony Blair": {
+      "IraqWar": 1
+    },
+    "George Bush": {
+      "IraqWar": 1
+    },
+    "Moqtada al-Sadr": {
+      "IraqWar": 1
+    },
+    "NOP poll": {
+      "IraqWar": 1
+    },
+    "Eden": {
+      "IraqWar": 1
+    },
+    "Colonel David Hackworth": {
+      "IraqWar": 2
+    },
+    "ABC television": {
+      "IraqWar": 1
+    },
+    "General Creighton Abrams": {
+      "IraqWar": 2
+    },
+    "US army": {
+      "IraqWar": 1
+    },
+    "Saigon": {
+      "IraqWar": 1
+    },
+    "Admiral Michael Boorda": {
+      "IraqWar": 2
+    },
+    "Newsweek": {
+      "IraqWar": 1
+    },
+    "David Hackworth": {
+      "IraqWar": 1
+    },
+    "Eilhys England": {
+      "IraqWar": 1
+    },
+    "Donald Rumsfeld": {
+      "IraqWar": 1
+    },
+    "Irene Khan": {
+      "H1N1": 1
+    },
+    "Amnesty International": {
+      "H1N1": 1
+    },
+    "Eton College": {
+      "H1N1": 2
+    },
+    "Health Protection Agency": {
+      "H1N1": 4
+    },
+    "Welford primary school": {
+      "H1N1": 2
+    },
+    "Nicola Sturgeon": {
+      "H1N1": 4
+    },
+    "Department of Health": {
+      "H1N1": 3
+    },
+    "Annette Street primary school": {
+      "H1N1": 1
+    },
+    "Victoria infirmary": {
+      "H1N1": 1
+    },
+    "World Health Organisation": {
+      "H1N1": 1
+    },
+    "British scientists": {
+      "H1N1": 1
+    },
+    "Potters Bar research lab": {
+      "H1N1": 1
+    },
+    "BP": {
+      "bpoil": 3
+    },
+    "Obama administration": {
+      "bpoil": 2
+    },
+    "U.S. Attorney General Eric Holder": {
+      "bpoil": 1
+    },
+    "Frank O'Donnell": {
+      "bpoil": 2
+    },
+    "Senate Majority leader Harry Reid": {
+      "bpoil": 1
+    },
+    "Walker Johnson": {
+      "bpoil": 1
+    },
+    "Eric Holder": {
+      "bpoil": 1
+    },
+    "BP Plc Chief Executive Tony Hayward": {
+      "bpoil": 1
+    },
+    "House Energy and Commerce Subcommittee": {
+      "bpoil": 1
+    },
+    "Haiti": {
+      "haiti": 1
+    },
+    "United Nations": {
+      "haiti": 2
+    },
+    "Secretary General Ban Ki-Moon": {
+      "haiti": 2
+    },
+    "Jean Bertrand Aristide": {
+      "haiti": 2
+    },
+    "Barbara Plett": {
+      "haiti": 2
+    },
+    "UN troops": {
+      "haiti": 2
+    },
+    "African Union": {
+      "LibyaWar": 1
+    },
+    "Moammar Gadhafi": {
+      "LibyaWar": 2
+    },
+    "Moussa Ibrahim": {
+      "LibyaWar": 2
+    },
+    "Hillary Clinton": {
+      "LibyaWar": 2
+    },
+    "Mark Toner": {
+      "LibyaWar": 2
+    },
+    "Ben Wedeman": {
+      "LibyaWar": 1
+    },
+    "Bernard-Henri Levy": {
+      "LibyaWar": 3
+    },
+    "Alexis de Tocqueville": {
+      "LibyaWar": 1
+    },
+    "Sarkozy": {
+      "LibyaWar": 2
+    },
+    "Qadhaffi": {
+      "LibyaWar": 2
+    },
+    "Fareed": {
+      "LibyaWar": 2
+    },
+    "Fareed Zakaria": {
+      "LibyaWar": 1
+    },
+    "Peter Godwin": {
+      "LibyaWar": 1
+    },
+    "Nicholas Kristof": {
+      "LibyaWar": 1
+    },
+    "Krista Friedland": {
+      "LibyaWar": 1
+    },
+    "America": {
+      "LibyaWar": 1
+    }
+  },
+  "topics": [
+    "EgyptianProtest",
+    "Finan",
+    "MJ",
+    "SyrianCrisis",
+    "IraqWar",
+    "H1N1",
+    "bpoil",
+    "haiti",
+    "LibyaWar"
+  ]
+}

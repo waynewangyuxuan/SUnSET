@@ -1,0 +1,23 @@
+{
+  "dr. mohamed elbaradei": {
+    "raw_name": "Dr. Mohamed ElBaradei",
+    "canonical_name": "Dr. Mohamed ElBaradei",
+    "wikidata_id": null,
+    "entity_type": null,
+    "resolution_method": "fallback"
+  },
+  "muslim brotherhood": {
+    "raw_name": "Muslim Brotherhood",
+    "canonical_name": "Muslim Brotherhood",
+    "wikidata_id": null,
+    "entity_type": null,
+    "resolution_method": "fallback"
+  },
+  "saad eddin ibrahim": {
+    "raw_name": "Saad Eddin Ibrahim",
+    "canonical_name": "Saad Eddin Ibrahim",
+    "wikidata_id": null,
+    "entity_type": null,
+    "resolution_method": "fallback"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "count": {
+    "Carnival Triumph": {
+      "EgyptianProtest": 1
+    },
+    "Mohammed Bouazizi": {
+      "EgyptianProtest": 2
+    },
+    "Zine el-Abidine Ben Ali": {
+      "EgyptianProtest": 2
+    },
+    "Hosni Mubarak": {
+      "EgyptianProtest": 1
+    },
+    "Saad Eddin Ibrahim": {
+      "EgyptianProtest": 1
+    },
+    "Dr. Mohamed ElBaradei": {
+      "EgyptianProtest": 1
+    },
+    "Mona Eltahawy": {
+      "EgyptianProtest": 1
+    },
+    "Anwar Sadat": {
+      "EgyptianProtest": 1
+    }
+  },
+  "topics": [
+    "EgyptianProtest"
+  ]
+}
