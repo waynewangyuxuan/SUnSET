@@ -1,0 +1,801 @@
+ˇ˛                                                    Who s important? 
+                                       : Synergistic Understanding of Stakeholder,
+                                  Events and Time for Timeline Generation
+                              Tiviatis Sim1,2, Yang Kaiwen, Shen Xin, Kenji Kawaguchi1
+                  1National University of Singapore, 2A*STAR Institute of High Performance Computing
+                         tiviatis@u.nus.edu, kaiwen_yang@alumni.brown.edu, sxstar@zju.edu.cn, kenji@comp.nus.edu.sg,
+                                    Abstract
+                     As news reporting becomes increasingly
+                     global and decentralized online, track-
+                     ing related events across multiple sources
+                     presents significant challenges.  Existing
+                     news summarization methods typically uti-
+                     lizes Large Language Models and Graphical
+                     methods on article-based summaries. How-
+                     ever, this is not effective since it only con-
+                     siders the textual content of similarly dated
+                     articles to understand the gist of the event.
+                     To counteract the lack of analysis on the
+                     parties involved, it is essential to come up
+                     with a novel framework to gauge the impor-
+                     tance of stakeholders and the connection of
+                     related events through the relevant entities
+                     involved. Therefore, we present SUnSET:
+                     Synergistic Understanding of Stakeholder,
+                     Events and Time for the task of Timeline
+                     Summarization (TLS). We leverage pow-
+                     erful Large Language Models (LLMs) to
+                     build SET triplets and introduced the use
+                     of stakeholder-based ranking to construct a
+                     Relevancy metric, which can be extended
+                     into general situations. Our experimental          Figure 1: An illustration of how SunSET generates a
+                     results outperform all prior baselines and         timeline for TLS through utilizing stakeholder informa-
+                     emerged as the new State-of-the-Art, high-         tion for relevance scoring.
+                     lighting the impact of stakeholder informa-
+        arXiv:2507.21903v2  [cs.SI]  31 Jul 2025tion within news article.two essential requirements; (1) the events gen-
+                 1    Introduction                                      erated must be sequential and succinct (2)
+                 The abundance of online news media in the              only relevant, fundamental and essential events
+                 advent of the information era has led to a             should be included.
+                 growing volume of daily data production [17],            Several papers have attempted to improve
+                 which poses significant challenges in efœciently       the brevity of the first requirement and the
+                 identifying and understanding information con-         identification of the second through the use
+                 cisely [1].  To promote efœcacy and prevent            of powerful Large Language Models (LLMs).
+                 information overloading, automated tasks such         These methods typically yield good results [22,
+                 as Timeline Summarization (TLS[4, 8, 6] be-         16, 6, 12, 23] due to the emergence of tem-
+                 comes especially critical in this era [12, 23].        poral understanding capabilities found within
+                 TLSisthegeneration of a summarized timeline            LLMs [24]. Nevertheless, the utilization of
+                 of events, where multiple date-event pairs are         LLMsinTLSisstillrelativelyunderexplored[6,
+                 sequentially listed to form a narrative for a par-    16] as compared to works on temporal rea-
+                 ticular topic. This process generally involves         soning such as temporal question answering
+ˇ˛                tasks [11].                                          2   Related Works
+                   Although previous works have utilized LLMs        Recent TLS approaches can be broadly cate-
+                to aid temporal understanding within TLS             gorized into two main types: traditional meth-
+                frameworks, they typically focus on article          ods and LLM-augmented methods; although
+                summarization. Moreover, earlier approaches          variants of traditional clustering methods are
+                predating LLMs primarily addressed causal            still popular approaches when it comes to TLS
+                and temporal influences. Yet, stakeholders di-       task [5, 3], the rise of emergent capabilities in
+                rectly involved in events are crucial for identi-    generative LLMs has led to increasing efforts to
+                fying links between events and assessing their       leverage these tools for TLS tasks, often with
+                significance an aspect largely overlooked in         diverse objectives. Although LLM applications
+                current TLS research. Incorporating stake-           are more commonly associated with tempo-
+                holder information can enhance both sequential       ral reasoning, their usage in TLS has grown
+                curation and importance selection by ground-         significantly over the past three years. For
+                ing the timeline in real-world relevance.            instance, Wu et al. s paper highlighted the im-
+                   As such, we propose SUnSET: Synergis-             portance of temporal and causal relationships
+                tic Understanding of Stakeholder, Events and         by incorporating LLMs into self-questioning
+                Time, for the task of automated TLS genera-          strategies. On the other hand, works by Hu
+                tion (Fig. 1). Unlike prior methods, SUnSET          et al. and Qorib et al. introduced the notion of
+                attempts to extract relevant information of          LLMs functioning as pseudo-oracles, emulat-
+                various stakeholders mentioned within articles.      ing crowdsourced event clustering via pairwise
+                Moreover, instead of summarizing articles im-        querying during the clustering process.
+                mediately [12, 6], SUnSET attempts to extract          Clustering methods in TLS are typically im-
+                multiple relevant events mentioned within an         plemented in two distinct ways [5]. The more
+                article to enable a better representation of oc-     conventional approach involves grouping key
+                currences documented by a single news article.       dates to generate graph-based rankings [18]
+                The extracted stakeholder and event informa-         where subsequent summaries will be formed by
+                tion will subsequently be combined with its          selecting the top candidate sentences derived
+                estimated timeframe to generate a Stakeholder-       from generated ranked lists of important dates.
+                Event-Time triplet (SET). This will be utilized      Alternatively, the other method involves  event 
+                in various clustering steps of the timeline gen-     clustering [14], where article-level summaries
+                eration process to eventually generate a singu-      generated once from each article are aggregated
+                lar summarized timeline. SUnSET was tested           based on textual similarity. Increasingly, LLMs
+                against classic TLS datasets [19, 20] and was        are integrated into these processes, especially to
+                able to improve existing baselines to emerge as      enhance summarization. For example, Hu et al.
+                the new state of the art.                            applied LLMs for article-level summarization
+                   Henceforth, the key contributions from our        prior to clustering, followed by a reclustering
+                paper include the following:                         stage where the LLM validates cluster cohe-
+             1. A novel framework is introduced to construct         sion through pairwise comparisons of summary
+                and apply SET for TLS.                               nodes. Meanwhile, Wu et al. explored itera-
+                                                                     tive prompting techniques to survey context by
+             2. This is the first work to propose methods for ex-    progressively self-refining queries with LLMs
+                tracting and utilizing stakeholder information       to retrieve more relevant content. Building
+                within TLS.                                          upon these efforts, our paper advances TLS
+                                                                     clustering with LLM augmentation, where we
+             3. Multiple scoring mechanisms are developed,           will expand on stakeholder-based heuristics to
+                along with constraint-based proofs of stake-         assess event relevance.
+                holder relevance applicable to general cases.        3   Methodology
+             4. Empirical evaluations across TLS datasets            We introduce SUnSET: Synergistic Un-
+                demonstrate improved performance, validating         derstanding of Stakeholder, Events and
+                the benefits of SUnSET in TLS tasks.                 Time in this paper for the task of TLS. SUn-
+ˇ˛                Figure 2: Full SUnSET Framework for TLS. News articles generate SETs and Stakeholders undergo Coreference
+                Resolution. Subsequently, events are clustered through Cosine Similarity and Relevance. The clusters will then be
+                ranked while TextRank extracts the narrative for final timeline creation.
+                SET aims to utilize stakeholder information          knowledge graph (KGwas built from the wiki-
+                while identifying multiple event occurrences         data [21] database. The specifics of the KG
+                within a single article for creating a graph rep-    building can be accessed in Appendix B.
+                resentation of important events interconnected       3.2   Event Clustering
+                to each other. The general pipeline can be seen
+                in Figure 2, where the pipeline is split into
+                three main sequences.                                               Rarity Across Topics
+                                                                                          Rare      Common
+                3.1    SET Generation                                               ow
+                The first step of SUnSET requires the genera-                  ccurrenceLNormal     Irrelevant
+                tion of Stakeholder, Event and Time to form                    Reo HighSignificant   Normal
+                a triplet (SET). This is done via utilizing a
+                LLM to extract events mentioned within an            Table 1: Matrix showing Stakeholder frequency and
+                article and their estimated date of occurrence.      relevance; Reoccurrence refers to repeated occurrence
+                Therefore,    every article A may contain            within the current topic, whereas rarity looks into fre-
+                multiple events: A í! e ,e ,e ,....          After    quency of a stakeholder across all topics.
+                                             1  2   3
+                extracting the event and its estimated date            The next stage of the workflow involves the
+                (t), we call the same LLM to extract relevant        event clustering process. Typically, this in-
+                stakeholders mentioned within the article            volves using content found within similarly
+                with a maximum of 5 stakeholders per event:          dated articles to generate clusters, where each
+                S = (¬ ,¬ ,¬ ,¬ ,¬ ). The term stakeholder           article forms an event node. Instead of us-
+                  e      1  2  3  4  5
+                used here strictly refers to an entity which is      ing the first five sentences in the body of
+                either a person or an organization. This results     each article [5] or a pre-generated article sum-
+                in a series of SET for a single article: A í!         mary [6, 12] as the input, SUnSET uses every
+                ((S ,e ,t ),(S ,e2,t ),(S ,e3,t ),...).              single event (e) to generate a more accurate
+                   e1   1  e1    e2      e2     e3     e3
+                The relevant prompts used can be found in            representation of an event s impact.
+                Appendix A.                                            Additionally, unlike the aforementioned clus-
+                   Subsequently, Coreference Resolution will be      tering methods which uses only date or cosine
+                done for all of the extracted stakeholders due       similarity for cluster creation, we came up with
+                to difference in naming such as utilizing a ti-      a new metric to gauge the importance of an
+                tle or a position than a name (E.g. President        event.   This new metric incorporates stake-
+                of the United Statesor differences in naming       holder information; intuitively, the more the
+                (E.g. POTUS v.s. President of America). A            stakeholders occurs across all topics D, the
+ˇ˛                less important they are. Similarly, if there is     may have same penalty output as those with
+                frequent reoccurrence of stakeholders within        both rare and high reoccurrence (Significant)
+                the same topic (d " D), they are more signifi-      since both cases provides high |"A¬ " D| values.
+                cant (Tab. 1). Therefore, SUnSET clustering         Contrary to using PIDF, the coefœcient of varia-
+                introduces the use of Equation 1 to represent       tion in the original penalty score represents the
+                the relevance of stakeholders. This score pe-       spread of ¬ across all topics, which allows the
+                nalizes common stakes across D (Eqn. 2while       subsequent penalization of compact ¬ counts
+                rewarding within-topic reoccurrence (Eqn. 3).       while identifying low and high frequency topics
+                                                                    in high-variation ¬ counts through percentage
+                     Rel(¬,d= ≤(P(¬,d)∑R(count(¬ ))      (1   multiplications. The behaviour of the differ-
+                                                       d            ent penalty and reward scores will be further
+                                     s          count(¬           illustrated in Appendix D.
+                                      ¬D               d
+                      P(¬,d) = xØ    ∑ p|D| ◊ count(¬ )      (2)
+                                  ¬D                   D                            |"A " D|"|"A "D|+0.5
+                                                                     P     (¬) = lg(                 ¬           )
+                                      x/10    "x/10                    IDF                 |"A "D|+0.5
+                            R(x= e       "e                (3)                              ¬                  (5)
+                                      x/10    "x/10
+                                     e     +e                         To increase the strictness of relevant events
+                             SET SET
+                                d     d
+                   W = X X{Bool                  (¬ ,¬ )∑           within the same cluster, we have also experi-
+                      edge                   EMn ei ej              mented with incorporating stakeholder Exact
+                               i   j8=i                      (4)    Matching (EM), where every 2 nodes requires
+                             [ X Rel(¬,d)+cos(e ,e )]}
+                                                   i   j            at least N-matching unique stakeholders to
+                             ¬i=¬j                                  have an edge. Therefore, the clustering pro-
+                The penalty score (Putilizes the coefœcient       cess uses the encoded event summary from a
+                of variation [2] to grasp the relative dispersion   General Text Embedding (GTE) Model [25]
+                of stakeholder counts with respect to the sam-      to obtain query-based cosine similarity scores
+                ple mean across all topics. This value will be      combined with relevancy scores to generate the
+                max-min normalized, and multiplied by the           top 20 similar events for every node. These
+                percentage of occurrence in the current topic.      events have to satisfy the boolean EM con-
+                The boundary of P and related proof will be         dition to gain a weighted connection (W        )
+                in Appendix C. On the other hand, the re-                                                       edge
+                                                                    with the query node (Eqn. 4). Due to the
+                ward score (R) uses a dampened hyperbolic           use of relevancy scores, our method does not
+                tangent score with a factor of 1 to limit the       need to incorporate resource-intensive pairwise
+                                                 10
+                reward value from exploding, where the maxi-        LLMcomparisons of events found in the same
+                mumpossible value is capped at 1. The final         cluster [6, 12].
+                relevance score thus multiplies the reward with
+                the penalty score, before using a hyperparame-      3.3   Timeline Generation
+                ter ≤ to tune the significance of the relevance     After obtaining multiple clusters, each clus-
+                score.                                              ter C undergoes a re-ranking based on both
+                   To test the efœcacy of the aforementioned        their size and the existing relevance of their
+                penalty score, we introduce another penalty         events  stakeholders (Eqn. 7); instead of in-
+                scoring, which is an altered version of the         corporating relevance scoring to aid in edge
+                inverse document frequency (IDF) found in           connection (Eqn. 4), the relevance score is ap-
+                BM25 [15]. Unlike Equation 2, Equation 5            plied to determine how significant each cluster
+                directly uses the absence and presence of stake-    is relative to both |C| and Rel. Events which
+                holder counts across all documents to estimate      are measured as significant will then be passed
+                the degree to penalize; this value however, fails   into TextRank [9] to identify important nodes
+                to capture the actual extent of topic-based         within existing clusters. The final set of nodes
+                counts since it does not consider topic-based       will subsequently be used in the final Timeline
+                absence but document-based absence across           Generation (TLG).
+                the full document set. This may lead to edge
+                cases being misrepresented: cases with com-                      S = [ {¬ |¬ "S }                (6)
+                mon rarity and low reoccurrence (Irrelevant)                      C                  e
+                                                                                       e"C
+ˇ˛                                                                   and the number of sentences to include in each
+                                               P¬"SC Rel(¬,d)      date, a single timeline summarizing the topic
+                Significance = [1+ln(|C|)]∑                        should be generated. This generated timeline
+                                                     |SC|    (7)   will subsequently be compared with the ground
+                                                                   truth provided in the datasets. The baselines
+                4   Experimental Setups                            from the selected benchmarks are run in their
+                Datasets. We used two renowned TLS                 publicly available GitHub repository.
+                datasets, Timeline17 (T17) [19] and Crisis [20].      Wewill release our full code publicly on Github once
+                T17 contains 19 timelines compiled from vary-      the paper is accepted into the conference.
+                ing sources of online news sites, spanning 9       5    Experimental Results
+                major topics from 2005-2013, each with 1-5         Table 2 showcases SUnSET as compared to
+                ground truth timelines. On the other hand,         the previously SOTA baselines. We selected
+                Crisis has 22 annotated timelines covering 4       the strongest model for each method for the
+                critical crisis events, each containing 4-7 ground comparisons. We also included Llama2-13B in
+                truth timelines.                                   Table 2 since Llama2 was the original model
+                Benchmark. We use two recent SOTA pa-              used in LLM-TLS s paper [6] and it occasion-
+                pers as our baselines: Hu et al. and Wu et al.     ally performs better than Qwen2.5-72B.
+                are the current best-performing works and have       Dataset Method      LLM     AR-1 AR-2 Date-F1
+                reproducible results on T17 and Crisis, beating
+                prior popular methods such as CLUST [5] and                  CHRONOS Qwen72B 0.108 0.045       0.323
+                EGC[8].                                                      LLM-TLS   Llama13B 0.112  0.032   0.329
+                                                                     Crisis  LLM-TLS    Qwen72B 0.111 0.036    0.326
+                Models and Deployment. For experi-                           SUnSET     Qwen72B 0.129 0.047   0.389
+                ments, we adopted Qwen2.5-72B-Instruct [13],                 SUnSET     GPT-4o   0.107 0.036   0.381
+                and GPT-4 omni [10].          We used GTE-                   CHRONOS Qwen72B 0.116 0.042       0.522
+                Modernbert-Base for encoding. For the main                   LLM-TLS   Llama13B 0.118  0.036   0.528
+                                                                     T17     LLM-TLS    Qwen72B 0.114 0.040    0.543
+                experimental results, we used the best model,                SUnSET     Qwen72B 0.136 0.044    0.576
+                Qwen2.5-72B-Instruct to compare across the                   SUnSET     GPT-4o   0.120 0.039  0.590
+                different benchmarks. All model deployment         Table 2: Performance of SUnSET on Crisis and T17
+                were done with VLLM [7].                           datasets
+                Metrics. Adhering to previous work done [6,           Our method is able to defeat all prior work
+                12, 23], we incorporate a part of the Tilse        in all our metrics used for evaluation. For in-
+                framework [18] and use three main scores to        stance, SUnSET managed to improve Crisis
+                analyse the performance of the TLS task. We        Date-F1 score by 18.2%, ROUGE-1 by 15.2%
+                use an Alignment-based ROUGE-1 F1-score            and ROUGE-2 by 30.6% as compared to the
+                (AR-1to evaluate the semantic distance of uni-   previous SOTA result. The increase in Date-
+                gram overlaps between generated timelines and      F1 scores over all prior methods indicates the
+                the provided ground truth. We also used the        superiority of SUnSET in correctly identify-
+                corresponding bigram overlaps and scored the       ing important dates that were curated in the
+                Alignment-based ROUGE-2 F1-score (AR-2).           ground truth, whereas the high ROUGE scores
+                Lastly, the Date-F1 metric will score the sim-     support SUnSET in its ability to retain impor-
+                ilarity of the dates in the generated timeline     tant details in the distillation process. SUn-
+                compared to the referenced ground truth to         SET also managed to obtain the best scores in
+                understand the quality of major events picked      T17, surpassing the previous SOTA. The full
+                up.                                                set of experimental results are included in Ap-
+                Setups. Following prior papers [6, 12], the        pendix F; examples of timeline output can be
+                TLS task can be defined as follows: given a set    accessed in Appendix G. For reference, we at-
+                of temporally labelled news articles that is re-   tempted using SUnSET with a closed-sourced
+                lated to a broad topic (d í! A ,A ,A ...,"d "       model (GPT-4omni). GPT-4o performed rel-
+                                               1   2   3
+                D), as well as the expected number of dates        atively well and was able to have strong im-
+ˇ˛                 provements in Date-F1 scores, but lacks in its        the best performing results for both settings
+                 ROUGEscores as compared to Qwen experi-               (Tab. 4). The inclusion of relevance scoring im-
+                 ments. To understand where the difference in          proved the performance across all metrics for
+                 improvement comes from, more experiments              both Crisis and T17; this demonstrates the efœ-
+                 were done on the clustering and timeline gen-         cacy of utilizing Rel for cluster ranking, which
+                 eration processes.                                    ultimately improved the selection of important
+                 5.1   Relevancy in Event Clustering                   dates while retaining the details of important
+                                                                       events.
+                           Table 3: Rel in Event Clustering                    Table 4: Rel in Timeline Generation
+                      Dataset Method AR-1 AR-2 Date-F1                    Dataset    Method      AR-1 AR-2 Date-F1
+                                w/o Rel  0.114  0.041   0.354             Crisis     TextRank    0.117  0.040   0.368
+                      Crisis     Rel    0.129  0.047   0.389                       TextRank+Rel  0.129  0.047   0.389
+                                w/o Rel  0.127  0.038   0.551             T17        TextRank    0.128  0.041   0.559
+                      T17        Rel    0.136  0.044   0.576                       TextRank+Rel  0.136  0.044   0.576
+                   We further investigated the impact of rel-             To go a step further, we looked into the
+                 evance used in the event clustering process           influence of the ≤ hyperparameter over the
+                 by ablating all stakeholder-related information       entire SUnSET method, where we compared
+                 and relevancy scores, retaining only the cosine       the inclusion and exclusion of Rel during the
+                 similarity scores of the events. From the results     timeline generation process (Fig. 3). In the full
+                 observed in Table 3, the use of relevance scoring     SUnSET process (TextRank+Rel), all three
+                 and stakeholder information causes a leap in          scores (ROUGE-F1, ROUGE-F2 and Date-F1)
+                 performance on Date-F1 scores by 10% for Cri-         increases as ≤ increases. This behaviour is
+                 sis and 4.5% for T17. This indicates that our         more latent when Rel is only used in clustering
+                 method for the identification of stakeholders         (TextRank only) as a subsequent decrease in
+                 plays an integral part in ranking event impor-        performance is observed as ≤ increases beyond
+                 tance. Moreover, even without implementing            plateau.
+                 Rel, it is observed that utilizing LLMs to gen-          There are several differences in Crisis and
+                 erate event sets e in SET is already more effec-      T17 s increase as ≤ grows. T17, which contains
+                 tive than existing methods which typically uses       a larger amount of topics but a smaller pool of
+                 summarization of A [12, 6] or a self-questioning      articles within each topic (larger D and smaller
+                 rewriter [23]. Even without pairwise matching         A) tends to have a sharp and significant in-
+                 ( w/o Rel ), using only the cosine similarity of      crease with a small ≤ at 0.1; although it shows
+                 e managed to beat the benchmark set by LLM-           the use of Rel is effective once introduced, the
+                 TLS and CHRONOS (Tab. 2). This reveals                performance may subsequently become stag-
+                 that extraction of multiple mentioned events          nant with less significant changes with the in-
+                 within a single article is vital for TLS tasks;       crement of ≤. In contrary, Crisis with well
+                 this is intuitive, as news articles often refer-      established topics containing large pools of ar-
+                 ence related developments that connect to the         ticles tend to benefit more as ≤ increases after
+                 central event being reported. Significant occur-      its initial introduction, where small ≤ values
+                 rences may receive limited coverage initially,        are not helpful and potentially worsens perfor-
+                 until a subsequent development part of an on-         mance, and larger ≤ values provide remarkable
+                 going sequence draws renewed attention from           growth.
+                 multiple news outlets.                                5.3    Penalty PvP: P and P
+                 5.2   Relevancy in Timeline Generation                                                  IDF
+                                                                       As we introduced a total of two different
+                 As stakeholder relevance was utilized in the          penalty scores, we tested the difference in the
+                 Timeline Generation process, we compared the          type of penalty used within the relevance score
+                 difference between the use and absence of Rel         for both datasets. Table 5 shows the difference
+                 to estimate the significance of each cluster be-      in using P and PIDF for SUnSET, where the
+                 fore passing them into TextRank . We used             best result out of all ≤ attempted was used.
+ˇ˛                 Figure 3: Effect of ≤ hyperparameter on Rel in event clustering (TRand Rel in both event clustering and timeline
+                 generation (TR+Rel). The leftmost graph compares ROUGE-F1 values, the middle graph compares ROUGE-F2
+                 values, and the rightmost graphs compare Date-F1 values.
+                         Table 5: Penalty PvP- P versus PIDF              evance scoring used, and we observe that the
+                       Dataset Penalty AR-1 AR-2 Date-F1                  inclusion of EM is able to capture meaningful
+                                  P       0.119  0.043    0.374           stakeholder information to a proportional de-
+                       Crisis      IDF                                    gree. Typically, EM is sufœcient to result in
+                                   P      0.129  0.047   0.389                                   1
+                                  P       0.137  0.043   0.576            an improvement, and further matching counts
+                       T17         IDF
+                                   P      0.136  0.044   0.576            may instead deteriorate the performance of
+                                                                          models. This may be due to insufœcient stake-
+                 We observed that the impact on T17, which                holders with high counts, where the median of
+                 contains smaller datasets and thus lesser stake-         repetitive stakeholders typically lies around 3
+                 holders than Crisis, is smaller; the use of either       across all datasets (Appn. E). Though EM per-
+                 P and P         causes little differences in T17 s       formance does not match up to the addition of
+                           IDF                                            Rel, this is sufœcient to signify the importance
+                 final results, yet it causes significant differences     of stakeholder information in the TLS.
+                 in a larger dataset such as Crisis. This indi-             Furthermore, the improvement of Rel over
+                 cates that P is more flexible in more cases,             EMillustrates the strength of our formulated
+                 especially when there exist a larger event space         equation in stakeholder ranking. While Rel is
+                 where more Significant and Irrelevant stake-             used, the use of EM causes limited improve-
+                 holders (Tab. 1) can be identified.                      ments as Rel in itself is able to capture and
+                 5.4    Stakeholder Exact Matching                        rank the entities involved in e. It is also ob-
+                                                                          served that high ≤ values typically performs
+                 Table 6: Performance of using EM in Event Clustering;    better across differing EM settings, which fur-
+                 best ≤ values are recorded when ≤ > 0                    ther emphasizes the importance of Rel.
+                       Dataset   ≤   EM AR-1 AR-2 Date-F1                 5.5   Time Comparison
+                                      0   0.114  0.041    0.354
+                                 0    1   0.119  0.044   0.364                     Table 7: GPU hours for clustering
+                       Crisis         2   0.114  0.041    0.358
+                                1.0   0   0.129  0.047   0.389                    Dataset    Method      GPUTime
+                                0.9   1   0.127  0.046    0.386
+                                0.6   2   0.121  0.042    0.379                              LLM-TLS    7 hours 12 min
+                                      0   0.127  0.038    0.553                   Crisis    CHRONOS         24 min
+                       T17       0    1   0.128  0.040    0.553                              SUnSET      7 min 14 sec
+                                      2   0.127  0.040   0.558                               LLM-TLS    2 hours 12 min
+                                1.0   0   0.134  0.043    0.574                   T17       CHRONOS      1 hour 9 min
+                                0.9   1   0.136  0.044   0.576                               SUnSET      1 min 41 sec
+                                1.0   2   0.134  0.044    0.573
+                    Our initial experiments used only EM with               Lastly, we measured the GPU hours re-
+                 SET without consideration of relevance scores.           quired for running the experiments, and re-
+                 In Table 6, when ≤ is set as 0, there is no rel-         alised the high efœciency for using SUnSET as
+ˇ˛                 compared to previous SOTA methods. The               work, we were unable to fully mitigate halluci-
+                 benefits mainly comes from the lack of addi-         nations or factual inaccuracies that may arise
+                 tional LLM prompting beyond SET creation,            during event extraction when utilizing LLMs
+                 where CHRONOS utilizes questioning rounds            due to their inherent generation behavior. Ad-
+                 and LLM-TLS prompts once for every pairwise          ditionally, our experiments were constrained to
+                 comparison required. Therefore, SUnSET is            two representative LLMs, one open-source and
+                 able to bypass such time-consuming prompt-           one closed-source model, which limits broader
+                 questioning methods due to the high efœcacy of       generalization across models. Finally, in line
+                 utilizing stakeholder information for distilling     with previous studies, we evaluated SUnSET
+                 events into a compact representation.                using publicly available research datasets, with-
+                 6   Conclusions                                      out extending analysis to real-time news data
+                                                                      with more dynamic, evolving topics. We iden-
+                 We propose SUnSET, a novel approach that             tify this as a promising direction for future
+                 leverages SET triplets and stakeholder rele-         exploration.
+                 vance to generate milestone events for TLS           Acknowledgments
+                 problems.      By incorporating stakeholder-
+                 relevancy heuristics, SUnSET effectively ad-         WewouldliketothankAustenJeremySugiarto
+                 dresses the challenges of distilling multiple        and Leong Chee Kai in aiding the initial stages
+                 event sets from complex articles. Our frame-         of the experiments. We are also grateful to
+                 worksystematically tackles these issues in three     Dr. Basura Fernando for his help in reading
+                 critical steps: 1SET generation expands the        through the paper. We deeply appreciate any
+                 pool of candidate events per article; 2) SUn-        reviewers for their helpful feedback.
+                 SET s efœcient event clustering eliminates the
+                 need for time-intensive reclustering, even with
+                 larger candidate sets; 3) Stakeholder informa-       References
+                 tion encoding via Rel enhances both clustering
+                 and timeline generation by yielding a more          [1] M.Arnold, M.Goldschmitt, andT.Rigotti. Deal-
+                 representative set of linked events. Through            ing with information overload: A comprehensive
+                 extensive experiments and ablation studies on           review. Frontiers in Psychology, 14, Jun 2023.
+                 the T17 and Crisis datasets, SUnSET consis-             doi: 10.3389/fpsyg.2023.1122200.
+                 tently delivers state-of-the-art results, validat-  [2] C. E. Brown. Coefœcient of Variation, pages
+                 ing its effectiveness in both performance and           155 157. Springer Berlin Heidelberg, Berlin, Hei-
+                 interpretability. These findings underscore the         delberg, 1998. ISBN 978-3-642-80328-4. doi:
+                 potential of stakeholder-aware TLS systems to           10.1007/978-3-642-80328-4_13.      URL https:
+                 advance narrative coherence, relevance, and             //doi.org/10.1007/978-3-642-80328-4_13.
+                 human-aligned summarization across evolving         [3] X. Chen, M. Li, S. Gao, Z. Chan, D. Zhao,
+                 news domains, while also establishing stake-            X. Gao, X. Zhang, and R. Yan. Follow the
+                 holder scoring as a scalable framework for pri-         timeline! generating abstractive and extractive
+                 oritizing information in other contexts where           timeline summary in chronological order, 2023.
+                                                                         URLhttps://arxiv.org/abs/2301.00867.
+                 audience-centric relevance and societal impact
+                 are key   such as search, recommendation, [4] H. L. Chieu and Y. K. Lee. Query based event
+                 and policy communication.                               extraction along a timeline. In Proceedings of
+                                                                         the 27th Annual International ACM SIGIR Con-
+                 Limitations                                             ference on Research and Development in In-
+                                                                         formation Retrieval, SIGIR  04, page 425 432,
+                 Our study advances TLS through the integra-             New York, NY, USA, 2004. Association for
+                 tion of SET and stakeholder ranking mech-               Computing Machinery. ISBN 1581138814. doi:
+                                                                         10.1145/1008992.1009065. URL https://doi.
+                 anisms, though certain limitations remain.              org/10.1145/1008992.1009065.
+                 Within our domain of control, we applied feasi-     [5] D. Gholipour Ghalandari and G. Ifrim. Exam-
+                 ble refinement techniques such as prompt engi-          ining the state-of-the-art in news timeline sum-
+                 neering and performed rigorous reviews to min-          marization. In D. Jurafsky, J. Chai, N. Schluter,
+                 imize inconsistencies. However, as with prior           and J. Tetreault, editors, Proceedings of the 58th
+ˇ˛                    Annual Meeting of the Association for Com-              H. Wei, H. Lin, J. Yang, J. Tu, J. Zhang,
+                    putational Linguistics, pages 1322 1334, On-            J. Yang, J. Yang, J. Zhou, J. Lin, K. Dang,
+                    line, July 2020. Association for Computational          K. Lu, K. Bao, K. Yang, L. Yu, M. Li, M. Xue,
+                    Linguistics.   doi:  10.18653/v1/2020.acl-main.         P. Zhang, Q. Zhu, R. Men, R. Lin, T. Li,
+                    122.   URL https://aclanthology.org/2020.               T. Tang, T. Xia, X. Ren, X. Ren, Y. Fan, Y. Su,
+                    acl-main.122/.                                          Y. Zhang, Y. Wan, Y. Liu, Z. Cui, Z. Zhang, and
+                [6] Q. Hu, G. Moon, and H. T. Ng. From moments              Z. Qiu. Qwen2.5 technical report, 2025. URL
+                    to milestones: Incremental timeline summariza-          https://arxiv.org/abs/2412.15115.
+                    tion leveraging large language models. In L.-W.     [14] S. Ribeiro, O. Ferret, and X. Tannier. Unsu-
+                    Ku, A. Martins, and V. Srikumar, editors, Pro-          pervised event clustering and aggregation from
+                    ceedings of the 62nd Annual Meeting of the Asso-        newswire and web articles. In O. Popescu and
+                    ciation for Computational Linguistics (Volume 1:        C. Strapparava, editors, Proceedings of the 2017
+                    Long Papers), pages 7232 7246, Bangkok, Thai-           EMNLPWorkshop: Natural Language Process-
+                    land, Aug. 2024. Association for Computational          ing meets Journalism, pages 62 67, Copenhagen,
+                    Linguistics.   doi:  10.18653/v1/2024.acl-long.         Denmark, Sept. 2017. Association for Computa-
+                    390.   URL https://aclanthology.org/2024.               tional Linguistics. doi: 10.18653/v1/W17-4211.
+                    acl-long.390/.                                          URLhttps://aclanthology.org/W17-4211/.
+                [7] W. Kwon, Z. Li, S. Zhuang, Y. Sheng, L. Zheng,      [15] S. Robertson and H. Zaragoza.         The prob-
+                    C. H. Yu, J. E. Gonzalez, H. Zhang, and I. Stoica.      abilistic relevance framework: Bm25 and be-
+                    Efœcient memory management for large language           yond. Foundations and TrendsÆ in Informa-
+                    model serving with pagedattention. In Proceed-          tion Retrieval, 3(4):333 389, 2009. doi: 10.1561/
+                    ings of the ACM SIGOPS 29th Symposium on                1500000019.
+                    Operating Systems Principles, 2023.
+                [8] M. Li, T. Ma, M. Yu, L. Wu, T. Gao, H. Ji, and      [16] D. Sojitra, R. Jain, S. Saha, A. Jatowt, and
+                    K. McKeown. Timeline summarization based on             M. Gupta.      Timeline summarization in the
+                    event graph compression via time-aware optimal          era of llms. In Proceedings of the 47th Inter-
+                    transport. In M.-F. Moens, X. Huang, L. Specia,         national ACM SIGIR Conference on Research
+                    and S. W.-t. Yih, editors, Proceedings of the 2021      and Development in Information Retrieval, SI-
+                    Conference on Empirical Methods in Natural Lan-         GIR  24, page 2657 2661, New York, NY,
+                    guage Processing, pages 6443 6456, Online and           USA, 2024. Association for Computing Ma-
+                    Punta Cana, Dominican Republic, Nov. 2021.              chinery. ISBN 9798400704314. doi: 10.1145/
+                    Association for Computational Linguistics. doi:         3626772.3657899. URL https://doi.org/10.
+                    10.18653/v1/2021.emnlp-main.519. URL https:             1145/3626772.3657899.
+                    //aclanthology.org/2021.emnlp-main.519/.            [17] Statista.     News and magazines - world-
+                [9] R. Mihalcea and P. Tarau. TextRank: Bring-              wide:     Statista  market forecast.         URL
+                    ing order into text. In D. Lin and D. Wu, edi-          https://www.statista.com/outlook/amo/
+                    tors, Proceedings of the 2004 Conference on Em-         app/news-magazines/worldwide.
+                    pirical Methods in Natural Language Processing,     [18] J. Steen and K. Markert. Abstractive time-
+                    pages 404 411, Barcelona, Spain, July 2004. As-         line summarization. In L. Wang, J. C. K. Che-
+                    sociation for Computational Linguistics. URL            ung, G. Carenini, and F. Liu, editors, Proceed-
+                    https://aclanthology.org/W04-3252/.                     ings of the 2nd Workshop on New Frontiers in
+                [10] OpenAI et al. Gpt-4o system card, 2024. URL            Summarization, pages 21 31, Hong Kong, China,
+                    https://arxiv.org/abs/2410.21276.                       Nov. 2019. Association for Computational Lin-
+                                                                            guistics.  doi:  10.18653/v1/D19-5403.       URL
+                [11] B. Piryani, A. Abdallah, J. Mozafari, A. Anand,        https://aclanthology.org/D19-5403/.
+                    and A. Jatowt. It s high time: A survey of          [19] G. Tran, T. Tran, N.-K. Tran, M. Alrifai, and
+                    temporal information retrieval and question an-         N. Kanhabua. Leveraging Learning To Rank in
+                    swering, 2025. URL https://arxiv.org/abs/               an Optimization Framework for Timeline Sum-
+                    2505.20243.                                             marization. 2013.
+                [12] M. R. Qorib, Q. Hu, and H. T. Ng.           Just   [20] G. Tran, M. Alrifai, and E. Herder.        Time-
+                    what you desire: Constrained timeline sum-              line summarization from relevant headlines. In
+                    marization with self-reflection for enhanced            A. Hanbury, G. Kazai, A. Rauber, and N. Fuhr,
+                    relevance.   Proceedings of the AAAI Confer-            editors, Advances in Information Retrieval, pages
+                    ence on Artificial Intelligence, 39(23):25065           245 256, Cham, 2015. Springer International
+                    25073, Apr. 2025.     doi:  10.1609/aaai.v39i23.        Publishing. ISBN 978-3-319-16354-3.
+                    34691.    URL https://ojs.aaai.org/index.
+                    php/AAAI/article/view/34691.                        [21] D. Vrandei and M. Krˆtzsch. Wikidata. Com-
+                [13] Qwen, A. Yang, B. Yang, B. Zhang, B. Hui,              munications of the ACM, 57(10):78 85, Sep 2014.
+                    B. Zheng, B. Yu, C. Li, D. Liu, F. Huang,               doi: 10.1145/2629489.
+ˇ˛                  [22] S. Wang, Y. Li, H. Xiao, L. Deng, and Y. Dong.
+                       Webnewstimelinegenerationwithextendedtask
+                       prompting, 2023.        URL https://arxiv.org/
+                       abs/2311.11652.
+                  [23] W. Wu, S. Huang, Y. Jiang, P. Xie, F. Huang,
+                       and H. Zhao.        Unfolding the headline: Iter-
+                       ative self-questioning for news retrieval and
+                       timeline summarization.             In L. Chiruzzo,
+                       A. Ritter, and L. Wang, editors, Findings
+                       of the Association for Computational Linguis-
+                       tics:  NAACL 2025, pages 4385 4398, Albu-
+                       querque, New Mexico, Apr. 2025. Association for
+                       Computational Linguistics. ISBN 979-8-89176-
+                       195-7.    doi:   10.18653/v1/2025.findings-naacl.
+                       248.   URL https://aclanthology.org/2025.
+                       findings-naacl.248/.
+                  [24] S. Xiong, A. Payani, R. Kompella, and F. Fekri.
+                       Large language models can learn temporal rea-
+                       soning, 2024. URL https://arxiv.org/abs/
+                       2401.06853.
+                  [25] X. Zhang, Y. Zhang, D. Long, W. Xie, Z. Dai,
+                       J. Tang, H. Lin, B. Yang, P. Xie, F. Huang,
+                       M. Zhang, W. Li, and M. Zhang. mgte: General-
+                       ized long-context text representation and rerank-
+                       ing models for multilingual text retrieval, 2024.
+                       URLhttps://arxiv.org/abs/2407.19669.
+ˇ˛       A Prompts used for LLMs
+        Prompt for Event and Time Generation
+        You are a professional journalist that is tasked to generate date-based
+        event summary of a given article. A single list contains an article and
+        its published time. You should generate a dictionary of the most
+        relevant events of an article, where each key in the dictionary is a
+        string of the expected event start date in terms of Year-Month-Day
+        (e.g.2011-12-25) and the value will be a summary of the relevant events
+        on that day. Summarize only the most important events found in the
+        article, as succinctly as possible. If you are uncertain of the date of
+        an event, feel free to use the published date. You should only output
+        the dictionary in your answer. Generate a dictionary of events of the
+        following article: {str(article_x)}.
+        Prompt for Stakeholder Generation
+        You are a professional journalist that is tasked to generate the most
+        relevant stakeholders relevant to a given event summary of an article.
+        A single list contains an article and its published time. You should
+        generate a singular list containing not more than five relevant
+        stakeholders related to only the stipulated event mentioned. These
+        stakeholders should not be general, and must be identifiable named
+        entities that can be matched to a person, organization or role when read
+        on its own. Every single stakeholder generated should also ideally exist
+        in exact wording as mentioned within the original article. You should
+        only output the list of stakeholders in your answer, and all
+        stakeholders should be enclosed in string format. Generate a list of
+        related stakeholders of event: {dict[key_x]}.
+        Given article: {str(article_x)}.
+ˇ˛                                                                            1
+                B Building Knowledge Graph from Wikidata
+                Algorithm 1 Knowledge Graph for Coreference Resolution
+                 1: Initialize an empty dictionary: d ê! {}
+                 2: for Every stakeholder ¬ in S do
+                 3:   if ¬ in d then
+                 4:      continue
+                 5:   else
+                 6:      Search ¬ in Wikidata label/alt-label with API
+                 7:      if output O does not exist then
+                 8:        ¬  ê!Removetitle in ¬ with NER
+                            ≥
+                 9:        Search ¬≥ in Wikidata label/alt-label with API
+                10:        if output O does not exist then
+                11:           ¬¥ ê! Remove whitespace and replace with &&
+                12:           Search ¬≥ in Wikidata label/alt-label with API
+                13:           if output O does not exist then
+                14:             Use request API for Wikidata interface search
+                15:             if output O does not exist then
+                16:               d[¬] ê! ¬
+                17:               continue
+                18:             end if
+                19:           end if
+                20:        end if
+                21:      end if
+                22:   end if
+                23:   if Operator "Position Held By" exist in O then
+                24:      P ê!IDunder "Position Held By"
+                25:      d[¬] ê! P
+                26:      continue
+                27:   else
+                28:      d[¬] ê! O
+                29:      continue
+                30:   end if
+                31: end for
+                1Main API: https://www.wikidata.org/wiki/Wikidata:REST_API, NER module: https://huggingface.co/
+                 spacy/en_core_web_trf, Request module: https://requests.readthedocs.io/en/latest/
+ˇ˛                C Boundary for Penalty Score
+                Proof. Let x " Z and x e" 0 since x represents counts. |D| represents the size of all topics.
+                                                              CV = s                                             (8)
+                                                                     xØ
+                   From Equation (8),
+                                           P       2    P 2      P P 2         P 2        2     2
+                                             (x "xØ)       x "2xØ  x +   xØ       x "2|D|xØ +|D|xØ
+                                               i            i       i              i
+                                   CV2= |D|"1        =         |D|"1        =         |D|"1                      (9)
+                                                2                 2                     2
+                                              xØ                 xØ                    xØ
+                   Since n>1 and xØ e" 0,            |D|        |D|
+                                                    X 2       X 2           2 2
+                                                        x d"(      x = |D| xØ                                  (10)
+                                                         i         i
+                                                    i=1       i=1
+                                                 2
+                   From Equation (10), minus xØ |D|,
+                                                  |D|
+                                                 X 2           2       2 2        2
+                                                     x "|D|xØ d"|D| xØ "|D|xØ                                    (11)
+                                                      i
+                                                 i=1
+                   Change Equation (11) LHS to Equation (9),
+                                                      P 2      2       2 2     2
+                                                        x "|D|xØ    |D| xØ "|D|xØ
+                                                         i
+                                             CV2=       |D|"1    d"      |D|"1    =|D|                           (12)
+                                                           2              2
+                                                          xØ             xØ
+                   From Equation (12), since n > 1 and xØ e" 0,
+                                                          0 d" CV d"p|D|
+                                                           "
+                   From Equation (2), we divided CV by       D, and multiplied it by the percentage of ¬ belonging
+                in d, where 0 d" count(¬dd" 1, therefore,
+                                 count(¬D)
+                                                             0 d" P d" 1
+ˇ˛            D Behaviour of Reward and Penalty Scores
+              Weillustrate the behaviour of both Penalty and Reward in this section. From Figure 4, Graph
+            1 plots R (Eqn. 3) as the count of stakeholder increases. It can be observed that when the
+            count of the stakeholders (x ê! count(¬d)reach approximately 21, the value of R saturates
+            regardless of any more addition to counts for the same stakeholder. Subsequently, Graph 2 plots
+            the equation of unnormalized P (Eqn. 2) of 12 different scenarios (Tab. 8).
+             Index  Stakeholder Counts  Rationale
+             0      A: 2, B: 3, C:5     Close Distribution, All Low Counts
+             1      A: 90, B: 85, C:65  Close Distribution, All High Counts
+             2      A: 5, B: 5, C:5     Uniform Distribution, All Low Counts
+             3      A: 16, B: 16, C:16  Uniform Distribution, All High Counts
+             4      A: 15, B: 4, C:54   Single-Peak Distribution, Peak High Count
+             5      A: 1, B: 8, C:2     Single-Peak Distribution, Peak Low Counts
+             6      A: 6, B: 7, C:1     Double-Peaks Distribution, Peaks Low Counts
+             7      A: 21, B: 19, C:3   Double-Peaks Distribution, Peaks High Counts
+             8      A: 3, B: 0, C:0     Single-Peak Distribution, Peak Low Count, Rest are 0
+             9      A: 19, B: 0, C:0    Single-Peak Distribution, Peak High Count, Rest are 0
+             10     A: 6, B: 3, C:3     Single-Peak Distribution, Peak Low Count, Rest are half
+             11     A: 26, B: 13, C:13  Single-Peak Distribution, Peak High Count, Rest are half
+                      Table 8: Scenarios used for Stakeholder Counts across Three Topics (A, B and C)
+              Graph 3 plots the value of Rel without consideration of ≤ (by setting ≤ = 1to understand the
+            impact of multiplying P and R. Cases 0, 1, 2, 3, 10 and 11 illustrates when stakeholder counts are
+            well spread across the topics, their P values are low irregardless of high or low counts, which is the
+            desired behaviour since stakeholder with such behaviours fall under either  Normal  or  Irrelevant 
+            (Tab. 1). Alternatively,  Significant  cases with strong single-peak distribution dominating over
+            the others (Indices 4, 5, 8, 9) show significantly higher P values, where completely unique
+            stakeholders tend to reach maximum possible P. It is noteworthy to add that the difference
+            between the final Rel score between cases 8 and 9 is important since the R scores are able to
+            dampen case 8 s score due to its low count value which was set to the common median (3for
+            illustration. This also occurs between cases 4 and 5. Lastly, those with double-peak distribution
+            (Indices 6 and 7have a mid-low P value, where the duo peaks  P are significantly higher than
+            that of the topic with the low-value count, yet not as high as what would occur in a single-peak.
+            The duo-peaks were penalized with the number of similarly  Significant  topics within themselves.
+            This leads to a lower overall Rel score.
+ˇ˛                       Figure 4: Case-by-case representation of Penalty Behaviour
+           Similarly, we will examine the behaviour of PIDF. Graph 1 of Figure 5 also shows R for
+         reference. Graph 2 plots unnormalized PIDF value to show how it changes as |A¬ " D| increases
+         (Eqn. 5). It should be noted that indices 1, 3, 4, 7, 9 and 11 (Tab. 8cannot be differentiated
+         between topics (i.e. A, B and Csince there is no differentiation between topics while using
+         PIDF which makes it inferior to P. Despite so, it can be observed from Graph 2 that as more
+         articles uses the same stakeholder, PIDF becomes smaller, mirroring the way inverse document
+         frequencies work.
+           Graph 3 further documents the interaction of R and PIDF, where every line shows how the
+         differing counts of stakeholders across topic (|A¬ " D|) interact when PIDF multiplies R which
+         rewards within a topic (count(¬ )). It is observed that the relevance score of  Irrelevant  cases
+                             d
+         (Tab. 1) will still be highly rewarded beyond 1 once count(¬ goes beyond 5 regardless of
+                                               d
+         |A¬ " D|, for instance having 5 out of 100 of any stakeholder ¬ allows a Rel of around 1, which is
+         not ideal despite its proportionally low count value. This flaw from PIDF shows that proportion
+         and distribution should be essential, which is accounted for within P.
+ˇ˛                                                Figure 5: Representation of Penalty    Behaviour
+                                                                                   IDF
+                  E Repeating Stakeholder Counts
+                    We recorded the counts for each stakeholder across all topics in our dataset. There are
+                  occasional outliers where the entity involved may be mentioned more than a hundred times
+                  and may even reach the thousands, but typically, a count of ten or less is normal across all
+                  stakeholders existing in all topics. From Figures 6 and 7, we can observe that the individual
+                  median of each topic regardless of the dataset is around three. This means that within their own
+                  topics, most stakeholders are mentioned at least in three different articles.
+ˇ˛                    Figure 6: Stakeholder counts across topics within T17 Dataset
+                   Figure 7: Stakeholder counts across topics within Crisis Dataset
+ˇ˛              F Full Set of Experiment Results
+                                       Table 9: Crisis Results-SUnSET with P for Rel
+                                         TextRank+Rel                     TextRank
+                      beta  EM AR-1         AR-2      Date-F1    AR-1      AR-2      Date-F1
+                      0     0     0.114358  0.041683  0.354251   0.114358  0.041683  0.354251
+                      0.1   0     0.113652  0.039741  0.35494    0.112811  0.039234  0.353606
+                      0.2   0     0.116541  0.041465  0.360721   0.113745  0.039872  0.354645
+                      0.3   0     0.118841  0.043264  0.367969   0.11459   0.040077  0.358176
+                      0.4   0     0.119222  0.043375  0.367698   0.113476  0.039522  0.357489
+                      0.5   0     0.122711  0.04451   0.377522   0.116135  0.039776  0.366623
+                      0.6   0     0.12393   0.04462   0.381933   0.116748  0.040169  0.368
+                      0.7   0     0.125512  0.0456    0.384202   0.116847  0.040308  0.368
+                      0.8   0     0.127489  0.047185  0.383934   0.116723  0.040229  0.364686
+                      0.9   0     0.12894   0.047628  0.387541   0.116548  0.040077  0.364686
+                      1     0     0.129269  0.047488  0.388972   0.116641  0.04008   0.364686
+                      0     1     0.119383  0.044027  0.364554   0.119383  0.044027  0.364554
+                      0.1   1     0.11499   0.040711  0.358591   0.114242  0.040103  0.357267
+                      0.2   1     0.117851  0.04203   0.363621   0.115888  0.041408  0.361055
+                      0.3   1     0.119364  0.042948  0.368201   0.115872  0.041243  0.361055
+                      0.4   1     0.119155  0.042993  0.37158    0.115795  0.04119   0.360607
+                      0.5   1     0.120324  0.043291  0.374345   0.116859  0.040401  0.366181
+                      0.6   1     0.123812  0.044156  0.385318   0.116893  0.040489  0.366181
+                      0.7   1     0.124445  0.044881  0.383322   0.117104  0.040751  0.366181
+                      0.8   1     0.125976  0.04591   0.383054   0.117077  0.040633  0.366181
+                      0.9   1     0.127911  0.046209  0.386313   0.116135  0.039776  0.366623
+                      1     1     0.124948  0.045573  0.374559   0.114044  0.039693  0.366867
+                      0     2     0.114743  0.041232  0.358151   0.114743  0.041232  0.358151
+                      0.1   2     0.114549  0.039838  0.365324   0.113659  0.039767  0.361014
+                      0.2   2     0.115156  0.039829  0.367784   0.113425  0.039519  0.361014
+                      0.3   2     0.118806  0.041571  0.371988   0.114599  0.040124  0.361038
+                      0.4   2     0.120898  0.04296   0.37482    0.115251  0.040805  0.363499
+                      0.5   2     0.121954  0.043179  0.377068   0.115556  0.040812  0.363499
+                      0.6   2     0.121427  0.04293   0.379509   0.116569  0.040968  0.365772
+                      0.7   2     0.120243  0.042156  0.374532   0.1158    0.040556  0.364149
+                      0.8   2     0.120882  0.042673  0.375772   0.115812  0.040559  0.364149
+                      0.9   2     0.122365  0.043452  0.375772   0.115122  0.04015   0.365345
+                      1     2     0.12309   0.043711  0.375196   0.115122  0.040148  0.365345
+ˇ˛                                       Table 10: T17 Results-SUnSET with P for Rel
+                                         TextRank+Rel                     TextRank
+                      beta  EM AR-1         AR-2      Date-F1    AR-1      AR-2      Date-F1
+                      0     0     0.127151  0.038522  0.551891   0.127151  0.038522  0.551891
+                      0.1   0     0.133391  0.042983  0.567552   0.131371  0.042254  0.554819
+                      0.2   0     0.132674  0.042788  0.566986   0.128913  0.040551  0.550866
+                      0.3   0     0.13343   0.04304   0.569759   0.128958  0.040486  0.556219
+                      0.4   0     0.13434   0.043684  0.571095   0.128798  0.040446  0.556219
+                      0.5   0     0.136108  0.044275  0.571878   0.129042  0.040489  0.556219
+                      0.6   0     0.135763  0.044037  0.571878   0.12782   0.03994   0.55434
+                      0.7   0     0.13604   0.044052  0.569624   0.128425  0.040278  0.554834
+                      0.8   0     0.13582   0.043954  0.571009   0.128086  0.040158  0.554834
+                      0.9   0     0.134498  0.043165  0.574814   0.127756  0.03997   0.554834
+                      1     0     0.134713  0.043138  0.574814   0.127738  0.039948  0.554834
+                      0     1     0.128352  0.040235  0.553264   0.127691  0.039799  0.551384
+                      0.1   1     0.134273  0.043627  0.56971    0.131719  0.042692  0.553908
+                      0.2   1     0.133477  0.043096  0.571774   0.129177  0.041106  0.550931
+                      0.3   1     0.134157  0.043373  0.571774   0.129145  0.041125  0.55464
+                      0.4   1     0.134424  0.043731  0.571774   0.128781  0.040995  0.55464
+                      0.5   1     0.136009  0.044221  0.572557   0.128841  0.040975  0.55464
+                      0.6   1     0.136132  0.044262  0.572557   0.127743  0.040477  0.549568
+                      0.7   1     0.136607  0.044352  0.571172   0.128484  0.041047  0.550062
+                      0.8   1     0.136573  0.044345  0.573073   0.128222  0.040971  0.550062
+                      0.9   1     0.136085  0.043953  0.576362   0.128222  0.040947  0.550062
+                      1     1     0.136176  0.043886  0.576362   0.128222  0.040947  0.550062
+                      0     2     0.127571  0.04065   0.558906   0.127571  0.04065   0.558906
+                      0.1   2     0.134279  0.044326  0.567725   0.127598  0.041011  0.548946
+                      0.2   2     0.132227  0.04378   0.565846   0.126087  0.039899  0.548946
+                      0.3   2     0.13283   0.043909  0.57041    0.126327  0.03999   0.55172
+                      0.4   2     0.134523  0.04468   0.57041    0.127085  0.040477  0.55172
+                      0.5   2     0.133141  0.043959  0.57041    0.127483  0.040714  0.55172
+                      0.6   2     0.133539  0.044212  0.57041    0.127142  0.040493  0.55172
+                      0.7   2     0.133565  0.043979  0.57041    0.127077  0.040308  0.55172
+                      0.8   2     0.133548  0.043975  0.571507   0.126337  0.040098  0.55172
+                      0.9   2     0.133639  0.04401   0.571507   0.124933  0.038988  0.54984
+                      1     2     0.13477   0.044337  0.573387   0.124747  0.039042  0.54984
+ˇ˛                                             Table 11: Crisis Results-SUnSET with P     for Rel
+                                                                                   IDF
+                                                  TextRank+Rel                            TextRank
+                           beta   EM AR-1            AR-2         Date-F1     AR-1         AR-2        Date-F1
+                           0      0      0.114358    0.041683     0.354251    0.114358     0.041683    0.354251
+                           0.1    0      0.119213    0.042284     0.364802    0.11779      0.040881    0.363209
+                           0.2    0      0.11937     0.042153     0.365167    0.117337     0.040573    0.363209
+                           0.3    0      0.119812    0.042737     0.369653    0.117364     0.040541    0.363942
+                           0.4    0      0.118798    0.042092     0.370735    0.118033     0.041105    0.367189
+                           0.5    0      0.119503    0.043181     0.375763    0.118011     0.041095    0.367189
+                           0.6    0      0.118468    0.042296     0.37138     0.118011     0.041095    0.367189
+                           0.7    0      0.118511    0.042324     0.370646    0.118011     0.041095    0.367189
+                           0.8    0      0.118789    0.042531     0.369889    0.118011     0.041095    0.367189
+                           0.9    0      0.119232    0.043089     0.373136    0.118011     0.041095    0.367189
+                           1      0      0.118836    0.042856     0.373136    0.118011     0.041095    0.367189
+                           0      1      0.119383    0.044027     0.364554    0.119383     0.044027    0.364554
+                           0.1    1      0.116948    0.041352     0.368236    0.11742      0.041117    0.3668
+                           0.2    1      0.114585    0.040833     0.357094    0.117598     0.041219    0.3668
+                           0.3    1      0.114909    0.041108     0.362224    0.11765      0.041245    0.367534
+                           0.4    1      0.116967    0.041394     0.371358    0.117646     0.041252    0.367534
+                           0.5    1      0.117696    0.042491     0.373769    0.117646     0.041252    0.367534
+                           0.6    1      0.117333    0.042068     0.37128     0.117646     0.041252    0.367534
+                           0.7    1      0.119144    0.043011     0.374527    0.117646     0.041252    0.367534
+                           0.8    1      0.118695    0.042807     0.373769    0.117646     0.041252    0.367534
+                           0.9    1      0.118588    0.042762     0.373769    0.117646     0.041252    0.367534
+                           1      1      0.117075    0.04204      0.372349    0.117646     0.041252    0.367534
+                           0      2      0.114743    0.041232     0.358151    0.114743     0.041232    0.358151
+                           0.1    2      0.113404    0.039178     0.366255    0.112941     0.039047    0.363297
+                           0.2    2      0.112839    0.039618     0.360665    0.112568     0.03918     0.361919
+                           0.3    2      0.112525    0.038941     0.361231    0.113128     0.039125    0.364192
+                           0.4    2      0.112189    0.038723     0.362651    0.113128     0.039093    0.364192
+                           0.5    2      0.113626    0.039906     0.364744    0.113128     0.039093    0.364192
+                           0.6    2      0.112348    0.039172     0.363323    0.112722     0.03876     0.364192
+                           0.7    2      0.112828    0.03947      0.364744    0.11269      0.038761    0.364192
+                           0.8    2      0.112622    0.039416     0.364281    0.11269      0.038761    0.364192
+                           0.9    2      0.112912    0.039573     0.364281    0.11269      0.038761    0.364192
+                           1      2      0.113113    0.039672     0.363477    0.11269      0.038761    0.364192
+ˇ˛                                            Table 12: T17 Results-SUnSET with P    for Rel
+                                                                               IDF
+                                                TextRank+Rel                          TextRank
+                         beta    EM AR-1           AR-2        Date-F1     AR-1        AR-2       Date-F1
+                         0       0     0.127151    0.038522    0.551891    0.127151    0.038522   0.551891
+                         0.1     0     0.133361    0.042997    0.571505    0.128408    0.040082   0.55271
+                         0.2     0     0.133766    0.042873    0.575374    0.128416    0.039956   0.554628
+                         0.3     0     0.134439    0.042803    0.575513    0.128083    0.039733   0.556272
+                         0.4     0     0.135246    0.043226    0.575513    0.128149    0.039836   0.556272
+                         0.5     0     0.135214    0.043271    0.574128    0.128149    0.039836   0.556272
+                         0.6     0     0.135432    0.043603    0.573612    0.128149    0.039836   0.556272
+                         0.7     0     0.135341    0.043572    0.575207    0.128149    0.039836   0.556272
+                         0.8     0     0.134963    0.043413    0.575658    0.12811     0.039807   0.556272
+                         0.9     0     0.13518     0.043546    0.574529    0.12811     0.039807   0.556272
+                         1       0     0.133889    0.042507    0.57265     0.12811     0.039807   0.556272
+                         0       1     0.128352    0.040235    0.553264    0.127691    0.039799   0.551384
+                         0.1     1     0.137057    0.044288    0.574131    0.129329    0.040677   0.545189
+                         0.2     1     0.136771    0.043724    0.576053    0.129147    0.040417   0.548139
+                         0.3     1     0.13739     0.043633    0.576029    0.128679    0.040163   0.548139
+                         0.4     1     0.137267    0.043609    0.576029    0.129101    0.040205   0.549784
+                         0.5     1     0.137116    0.043592    0.574128    0.129101    0.040205   0.549784
+                         0.6     1     0.137352    0.043926    0.573612    0.129101    0.040205   0.549784
+                         0.7     1     0.136805    0.043857    0.573612    0.129101    0.040205   0.549784
+                         0.8     1     0.136675    0.043737    0.572515    0.129101    0.040205   0.549784
+                         0.9     1     0.136709    0.043784    0.571386    0.129101    0.040205   0.549784
+                         1       1     0.135355    0.04276     0.569507    0.129101    0.040205   0.549784
+                         0       2     0.127571    0.04065     0.558906    0.127571    0.04065    0.558906
+                         0.1     2     0.134797    0.043389    0.574589    0.126857    0.040582   0.551637
+                         0.2     2     0.134322    0.043568    0.57271     0.125526    0.039409   0.553047
+                         0.3     2     0.134659    0.043783    0.573226    0.125708    0.039558   0.553047
+                         0.4     2     0.134008    0.042938    0.57271     0.125539    0.039507   0.552531
+                         0.5     2     0.13373     0.043024    0.57271     0.12594     0.039747   0.552531
+                         0.6     2     0.13373     0.043039    0.57271     0.12594     0.039747   0.552531
+                         0.7     2     0.134293    0.043185    0.57271     0.12594     0.039747   0.552531
+                         0.8     2     0.134293    0.043185    0.57271     0.12594     0.039747   0.552531
+                         0.9     2     0.134407    0.043212    0.57271     0.12594     0.039747   0.552531
+                         1       2     0.134075    0.043106    0.57271     0.12594     0.039747   0.552531
+ˇ˛           G Example Timelines Generated from Experiments
+                          Figure 8: Example of Ground Truth Timeline of T17 BP-Oil
+             (a) LLM-TLS Generated Timeline              (b) SUnSET Generated Timeline
+           Figure 9: LLM-TLS (a) versus SUnSET (b) in generating example timeline of T17 BP-Oil (Fig. 8). Text with
+           green highlight indicates event which aligns better with Ground Truth
+ˇ˛                    Figure 10: Example of Ground Truth Timeline of Crisis Syria
+ˇ˛                   Figure 11: LLM-TLS Generated Timeline of Crisis Syria (Fig. 10)
+                   Figure 12: SUnSET Generated Timeline of Crisis Syria (Fig. 10)
