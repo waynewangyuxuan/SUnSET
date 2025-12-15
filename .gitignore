@@ -10,8 +10,21 @@ token.json
 # Node (if we add scripts later)
 node_modules/
 
-# Python (if we add scripts later)
+# Python
 __pycache__/
 *.pyc
 .venv/
 venv/
+*.egg-info/
+
+# Results (generated data)
+results/
+
+# UV lock file
+uv.lock
+
+# IDE/Editor
+.claude/settings.local.json
+
+# Local scripts
+act.sh

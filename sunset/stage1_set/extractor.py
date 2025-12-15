@@ -90,10 +90,10 @@ class EventExtractor:
 
         events = []
         for date, summary in events_dict.items():
-            # Validate date format
+            # Paper approach: only accept YYYY-MM-DD, fallback to pub_date
             if not self._is_valid_date(date):
                 self.logger.warning(
-                    f"Invalid date format: {date}, using pub_date",
+                    f"Invalid date format: {date}, using pub_date: {article.pub_date}",
                     data={"article_index": article_index},
                 )
                 date = article.pub_date
@@ -297,9 +297,15 @@ class EventExtractor:
         return []
 
     def _is_valid_date(self, date_str: str) -> bool:
-        """Check if date string is in YYYY-MM-DD format."""
+        """
+        Check if date string is valid YYYY-MM-DD format.
+
+        Paper approach: Only accept full Year-Month-Day format.
+        Partial dates (YYYY, YYYY-MM) should fallback to pub_date.
+        """
         if not date_str:
             return False
+        # Strict YYYY-MM-DD only (paper's expected format)
         pattern = r"^\d{4}-\d{2}-\d{2}$"
         return bool(re.match(pattern, date_str))
 
